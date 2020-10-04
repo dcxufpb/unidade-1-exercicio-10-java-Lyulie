@@ -3,28 +3,38 @@ package com.example.project;
 public class Loja {
 
     private String nomeLoja;
-    private String logradouro;
-    private int numero;
-    private String complemento;
-    private String bairro;
-    private String municipio;
-    private String estado;
-    private String cep;
+    private Endereco endereco;
     private String telefone;
     private String observacao;
     private String cnpj;
     private String inscricaoEstadual;
 
-    public Loja(String nomeLoja, String logradouro, int numero, String complemento, String bairro, String municipio,
-            String estado, String cep, String telefone, String observacao, String cnpj, String inscricaoEstadual) {
+    public Loja(
+        String nomeLoja,
+
+        String logradouro, 
+        int numero, 
+        String complemento, 
+        String bairro, 
+        String municipio, 
+        String estado, 
+        String cep,
+
+        String telefone, 
+        String observacao, 
+        String cnpj, 
+        String inscricaoEstadual
+    ) {
         this.nomeLoja = nomeLoja;
-        this.logradouro = logradouro;
-        this.numero = numero;
-        this.complemento = complemento;
-        this.bairro = bairro;
-        this.municipio = municipio;
-        this.estado = estado;
-        this.cep = cep;
+        this.endereco = new Endereco(
+            logradouro,
+            numero,
+            complemento,
+            bairro,
+            municipio,
+            estado,
+            cep
+        );
         this.telefone = telefone;
         this.observacao = observacao;
         this.cnpj = cnpj;
@@ -35,32 +45,8 @@ public class Loja {
         return this.nomeLoja;
     }
 
-    public String getLogradouro() {
-        return this.logradouro;
-    }
-
-    public int getNumero() {
-        return this.numero;
-    }
-
-    public String getComplemento() {
-        return this.complemento;
-    }
-
-    public String getBairro() {
-        return this.bairro;
-    }
-
-    public String getMunicipio() {
-        return this.municipio;
-    }
-
-    public String getEstado() {
-        return this.estado;
-    }
-
-    public String getCep() {
-        return this.cep;
+    public String getEndereco() {
+        return this.endereco.dadosEndereco();
     }
 
     public String getTelefone() {
@@ -79,9 +65,48 @@ public class Loja {
         return this.inscricaoEstadual;
     }
 
-    public String dadosLoja() {
-		// Implemente aqui
-		return null;
+    public static boolean isNullEmpty(String text) {
+		try{
+			int k = text.length();
+		} catch (NullPointerException npe) {
+			return true;
+		}
+		return text.isEmpty();
 	}
 
+    public String dadosLoja() {
+        // Implemente aqui
+        validarCamposObrigatorios();
+
+		
+        String _telefone = isNullEmpty(getTelefone())? "" : "Tel " + getTelefone();
+        _telefone = (!_telefone.isEmpty() && !isNullEmpty(endereco.getCep()))? " " + _telefone : _telefone;
+		
+		String _observacao = isNullEmpty(getObservacao())? "" : getObservacao();
+						
+		String _cnpj = "CNPJ: " + getCnpj();
+		
+		String _inscricao_estadual = "IE: " + getInscricaoEstadual();
+
+		String output = getNomeLoja() + "\n";
+        output += endereco.dadosEndereco();
+        output += _telefone + "\n";
+		output += _observacao + "\n";
+		output += _cnpj + "\n";
+		output += _inscricao_estadual + "\n";
+
+		return output.replace("\n", System.lineSeparator());
+    }
+    
+    public void validarCamposObrigatorios() {
+
+        if(isNullEmpty(getNomeLoja()))
+			throw new RuntimeException("O campo nome da loja é obrigatório");
+		
+		if(isNullEmpty(getCnpj()))
+			throw new RuntimeException("O campo cnpj da loja é obrigatório");
+	
+		if(isNullEmpty(getInscricaoEstadual()))
+			throw new RuntimeException("O campo inscrição estadual da loja é obrigatório");
+    }
 }
